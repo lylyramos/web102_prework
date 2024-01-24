@@ -10,6 +10,10 @@ import GAMES_DATA from './games.js';
 // create a list of objects to store the data about the games using JSON.parse
 const GAMES_JSON = JSON.parse(GAMES_DATA)
 
+console.log(GAMES_JSON,length)
+
+addGamesToPage(GAMES_JSON;)
+
 // remove all child elements from a parent element in the DOM
 function deleteChildElements(parent) {
     while (parent.firstChild) {
@@ -28,6 +32,17 @@ const gamesContainer = document.getElementById("games-container");
 // create a function that adds all data from the games array to the page
 function addGamesToPage(games) {
 
+    for (var i = 0; i < games.length; i++) {
+        //console.log(games[i]);
+        //console.log("adding object", obj)
+        var obj = `<div class='game-card'> \
+            <p>${games[i].name}</p> \
+            <img clas='game-img' src=${games[i].img}> \
+            </div>`
+        var el = document.createElement("div")
+        el.innerHTML = obj
+        gamesContainer.appendChild(el)
+      }
     // loop over each item in the data
 
 
@@ -47,6 +62,7 @@ function addGamesToPage(games) {
 
 }
 
+addGamesToPage(GAMES_JSON);
 // call the function we just defined using the correct variable
 // later, we'll call this function using a different list of games
 
@@ -61,20 +77,28 @@ function addGamesToPage(games) {
 const contributionsCard = document.getElementById("num-contributions");
 
 // use reduce() to count the number of total contributions by summing the backers
+const totalContributions = GAMES_JSON.reduce((acc,game) =>{
+    return acc + game.backers;
+  }, 0);
+
+console.log("totalContributions", totalContributions.toLocaleString('en-US'))
 
 
 // set the inner HTML using a template literal and toLocaleString to get a number with commas
-
+contributionsCard.innerHTML=totalContributions.toLocaleString('en-US')
 
 // grab the amount raised card, then use reduce() to find the total amount raised
 const raisedCard = document.getElementById("total-raised");
+const totalRaised = GAMES_JSON.reduce({acc, game} =>{
+    return acc + game.pledge;
+}, 0);
 
 // set inner HTML using template literal
-
+raisedCard.innerHTML = '$' + totalRaised.toLocaleString('en-US')
 
 // grab number of games card and set its inner HTML
 const gamesCard = document.getElementById("num-games");
-
+gamesCard.innerHTML = GAMES_JSON.length
 
 /*************************************************************************************
  * Challenge 5: Add functions to filter the funded and unfunded games
@@ -87,36 +111,58 @@ function filterUnfundedOnly() {
     deleteChildElements(gamesContainer);
 
     // use filter() to get a list of games that have not yet met their goal
-
+    let unfundedGames = GAMES_JSON.filter((game) => {
+        return game.pledge < game.goal;
+    });
 
     // use the function we previously created to add the unfunded games to the DOM
-
+    console.log(umfumdedGames)
 }
+
+//filterUnfundedOnly()
 
 // show only games that are fully funded
 function filterFundedOnly() {
     deleteChildElements(gamesContainer);
 
     // use filter() to get a list of games that have met or exceeded their goal
-
+    let fundedGames = GAMES_JSON.filter((game) => {
+        return game.pledged >= game.goal;
+    });
 
     // use the function we previously created to add unfunded games to the DOM
-
+    console.log(fundedGames)
+    addGamesToPage(fundedGames)
 }
 
+//filterFundedOnly()
 // show all games
 function showAllGames() {
     deleteChildElements(gamesContainer);
 
     // add all games from the JSON data to the DOM
-
+    addGamesToPage(GAMES_JSON);
 }
 
 // select each button in the "Our Games" section
 const unfundedBtn = document.getElementById("unfunded-btn");
+unfundedBtn.addEventListener("click", function(){
+    //code to be executed when the button is clicked
+    filterUnfundedOnly()
+    console.log("Button filterUnfundedOnly!");
+});
 const fundedBtn = document.getElementById("funded-btn");
+fundedBtn.addEventListener("click", function(){
+    //code to be executed when the button is clicked
+    fundedBt()
+    console.log("Button fundedBt!");
+});
 const allBtn = document.getElementById("all-btn");
-
+allBtn.addEventListener("click", function(){
+    //code to be executed when the button is clicked
+    showAllGames()
+    console.log("Button showAllGames!");
+});
 // add event listeners with the correct functions to each button
 
 
